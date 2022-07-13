@@ -31,9 +31,27 @@ React
 Vs Code 
 Eslint and Prettier tools for vs code 
 
+Eslint and Prettier Installation 
+
+https://dev.to/knowankit/setup-eslint-and-prettier-in-react-app-357b
+
+
+
 * Installation 
 
 You can get the project repo whether download the project from Github or clone the repository with command line. In the project directory, you can see the main files in src folder. 
+
+1. Command Line 
+
+% git clone git@github.com:hrzafer/cs-mentor-summer-project-2022.git (SSH)
+
+% cd cs-mentor-summer-project-2022 
+
+% code . 
+
+2. You can download the files from Github
+
+
 
 * Configuration 
 
@@ -46,6 +64,13 @@ You can open project directory choosing open folder section in vs code or you ca
 cd cs-mentor-summer-project
 cd frontend 
 code . 
+
+You can run the project; 
+
+% npm run start (which explains the commands below) 
+
+
+
 
 * Troubleshooting and FAQ
 
