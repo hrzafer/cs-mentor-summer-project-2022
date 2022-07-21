@@ -7,11 +7,11 @@ export class InfraStack extends cdk.Stack {
   constructor(scope: cdk.App, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    
+
     // defines an AWS Lambda resource
     const hello = new lambda.Function(this, 'HelloHandler', {
       runtime: lambda.Runtime.PYTHON_3_9,    // execution environment
-      code: lambda.Code.fromAsset(path.resolve(__dirname, '/cs-mentor-summer-project-2022/backend')),  // code loaded from "lambda" directory
+      code: lambda.Code.fromAsset('../backend'),  // code loaded from "lambda" directory
       handler: 'hello.handler'                // file is "hello", function is "handler"
     });
 
