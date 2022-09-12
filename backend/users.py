@@ -1,12 +1,10 @@
-import boto3
-import json
-import time
 import logging
-from boto3.dynamodb.conditions import Key
-from botocore.exceptions import ClientError
-from datetime import datetime
+import time
 import uuid
 
+import boto3
+from boto3.dynamodb.conditions import Key
+from botocore.exceptions import ClientError
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -38,7 +36,6 @@ class Users:
             now = int(time.time())
             item['UserId'] = uuid.uuid4().hex
             item['CreatedAt'] = now
-            self.table.put_item(Item=item)
             self.table.put_item(Item=item)
         except ClientError as err:
             logger.exception(
@@ -93,7 +90,8 @@ class Users:
                 KeyConditionExpression=Key('UserId').eq(user_id))
             if result['Count'] == 1:
                 item = result['Items'][0]
-                self.table.delete_item(Key={'UserId': user_id, 'CreatedAt': item['CreatedAt']})
+                self.table.delete_item(
+                    Key={'UserId': user_id, 'CreatedAt': item['CreatedAt']})
 
                 return item
             else:

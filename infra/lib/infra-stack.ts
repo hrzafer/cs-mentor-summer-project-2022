@@ -34,24 +34,24 @@ export class InfraStack extends cdk.Stack {
     });
 
     // defines an AWS Lambda resource
-    const hello = new lambda.Function(this, "FocusTrackerLambda", {
+    const lambda_function = new lambda.Function(this, "FocusTrackerLambda", {
       functionName: "FocusTrackerLambda",
       runtime: lambda.Runtime.PYTHON_3_9, // execution environment
       code: lambda.Code.fromAsset("../backend"), // code loaded from "lambda" directory
-      handler: "hello.handler", // file is "hello", function is "handler"
+      handler: "lambda.handler", // file is "lambda.py", function is "handler"
     });
 
-    // defines an API Gateway REST API resource backed by our "hello" function.
+    // defines an API Gateway REST API resource backed by our "lambda" function.
     const api = new apigw.LambdaRestApi(this, "FocusTrackerApi", {
-      handler: hello,
+      handler: lambda_function,
       proxy: false,
     });
 
      // grant the lambda role read/write permissions to our table
-     usersTable.grantReadWriteData(hello);
+     usersTable.grantReadWriteData(lambda_function);
 
      // grant the lambda role read/write permissions to our table
-     sessionsTable.grantReadWriteData(hello);
+     sessionsTable.grantReadWriteData(lambda_function);
 
     // # POST /Users body: {}
     // # PUT /Users/:id body: {} //Update user info

@@ -22,7 +22,7 @@ def handler(event, context):
         return response
 
     users = Users('FocusTrackerUsers')
-    sessions = Sessions()
+    sessions = Sessions('FocusTrackerSessions')
 
     # GET /users
     if httpMethod == 'GET' and path == '/users':
@@ -61,26 +61,31 @@ def handler(event, context):
             return buildResponse(403, "Not Found")
 
     # Get /users/{userId}/sessions
-    if httpMethod == 'GET' and re.search(r'/users/(\d+)/sessions$', path):
-        responseBody = sessions.get_all()
+    if httpMethod == 'GET' and re.search(r'/users/([a-f0-9]+)/sessions$', path):
+        user_id = event['pathParameters']['userId']
+        responseBody = sessions.get_by_user(user_id)
         return buildResponse(200, responseBody)
- # GET /users/{userId}/sessions/{sessionId}
-    if httpMethod == 'GET' and re.search(r'/users/(\d+)/sessions/\d+$', path):
-        sessions_id = re.search(r'/users/(\d+)/sessions/(\d+)', path)[2]
-        session = sessions.get(sessions_id)
+ 
+    # GET /users/{userId}/sessions/{sessionId}
+    if httpMethod == 'GET' and re.search(r'/users/([a-f0-9]+)/sessions/([a-f0-9]+)$', path):
+        user_id = event['pathParameters']['userId']
+        session_id = event['pathParameters']['sessionId']
+        session = sessions.get(user_id, session_id)
         return buildResponse(200, session)
 
      # POST /sessions
-    if httpMethod == 'POST' and re.search(r'/users/(\d+)/sessions$', path):
-        response = sessions.create(json.loads(event['body']))
+    if httpMethod == 'POST' and re.search(r'/users/([a-f0-9]+)/sessions$', path):
+        session = json.loads(event['body'])
+        session['UserId'] = event['pathParameters']['userId']
+        response = sessions.create(session)
         return buildResponse(200, response)
 
      # PUT /users/{userId}/sessions/{sessionId}
-    if httpMethod == 'PUT' and re.search(r'/users/(\d+)/sessions/\d+$', path):
+    if httpMethod == 'PUT' and re.search(r'/users/([a-f0-9]+)/sessions/([a-f0-9]+)$', path):
         return buildResponse(200, [path, event['pathParameters']['userId'], event['pathParameters']['sessionId'], json.loads(event['body'])])
 
      # DELETE /users/{userId}/sessions/{sessionId}
-    if httpMethod == 'DELETE' and re.search(r'/users/(\d+)/sessions/\d+$', path):
+    if httpMethod == 'DELETE' and re.search(r'/users/([a-f0-9]+)/sessions/([a-f0-9]+)$', path):
         sessions_id = re.search(r'/users/(\d+)/sessions/(\d+)', path)[2]
         session = sessions.remove(sessions_id)
         return buildResponse(200, session)
