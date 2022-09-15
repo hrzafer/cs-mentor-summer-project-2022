@@ -42,27 +42,26 @@ class Sessions:
                 "Couldn't add or update item %s in table %s.", item, self.tableName)
             raise StorageError(err)
 
-    def update(self, item):
+    def update(self, updated_item):
         try:
             result = self.table.query(
-                KeyConditionExpression=Key('UserId').eq(item['UserId']))
+                KeyConditionExpression=Key('SessionId').eq(updated_item['SessionId']))
 
             if result['Count'] == 1:
                 current_item = result['Items'][0]
-                current_item['Email'] = item['Email']
-                current_item['FirstName'] = item['FirstName']
-                current_item['LastName'] = item['LastName']
-                current_item['Avatar'] = item['Avatar']
+                current_item['StartedAt'] = updated_item['StartedAt']
+                current_item['EndedAt'] = updated_item['EndedAt']
+                current_item['Title'] = updated_item['Title']
                 self.table.put_item(Item=current_item)
                 return current_item
             else:
                 return None
         except ClientError as err:
             logger.exception(
-                "Couldn't add or update item %s in table %s.", item, self.tableName)
+                "Couldn't add or update item %s in table %s.", updated_item, self.tableName)
             raise StorageError(err)
 
-    def get_all(self, user_id):
+    def get_all(self):
         try:
             response = self.table.scan()
             return response['Items']
@@ -80,7 +79,7 @@ class Sessions:
             )
 
             return result['Items']
-            
+
         except ClientError as err:
             logger.exception(
                 "Couldn't get items with key %s from table %s.", user_id, self.tableName)
@@ -97,21 +96,20 @@ class Sessions:
                 return result['Items'][0]
             else:
                 return None
-            
+
         except ClientError as err:
             logger.exception(
                 "Couldn't get items with key %s from table %s.", user_id, self.tableName)
             raise StorageError(err)
-        return None
 
-    def remove(self, user_id):
+    def remove(self, session_id):
         try:
             result = self.table.query(
-                KeyConditionExpression=Key('UserId').eq(user_id))
+                KeyConditionExpression=Key('SessionId').eq(session_id))
             if result['Count'] == 1:
                 item = result['Items'][0]
                 self.table.delete_item(
-                    Key={'UserId': user_id, 'CreatedAt': item['CreatedAt']})
+                    Key={'SessionId': session_id})
 
                 return item
             else:
